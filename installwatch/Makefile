@@ -14,13 +14,18 @@ VERSION=0.7.0beta7
 BINDIR=$(PREFIX)/bin
 LIBDIR=$(PREFIX)/lib
 
+LIBS       = -ldl
+DEFINES    = -D_GNU_SOURCE -DPIC -fPIC -D_REENTRANT -DVERSION=\"$(VERSION)\"
+CFLAGS     = -Wall
+ALL_CFLAGS = $(CFLAGS) $(DEFINES)
+
 all: installwatch.so
 
 installwatch.so: installwatch.o
 	ld -shared -o installwatch.so installwatch.o -ldl -lc
 
 installwatch.o: installwatch.c localdecls.h
-	gcc -Wall -c -D_GNU_SOURCE -DPIC -fPIC -D_REENTRANT -DVERSION=\"$(VERSION)\" installwatch.c
+	gcc $(ALL_CFLAGS) -c installwatch.c
 
 localdecls.h: create-localdecls
 	./create-localdecls
@@ -47,7 +52,7 @@ tarball: clean
 	tar -czvC .. -f ../installwatch-$(VERSION).tar.gz installwatch-$(VERSION)
 
 test: install
-	gcc -Wall -DVERSION=\"$(VERSION)\" -o test-installwatch test-installwatch.c -ldl
+	gcc $(ALL_CFLAGS) -o test-installwatch test-installwatch.c $(LIBS)
 	$(DESTDIR)$(PREFIX)/bin/installwatch ./test-installwatch
 
 
