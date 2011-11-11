@@ -5,6 +5,7 @@
 # Make sure the directory you specify exists.
 
 PREFIX=/usr/local
+DESTDIR=
 
 # End of configurable part
 
@@ -25,19 +26,19 @@ localdecls.h: create-localdecls
 	./create-localdecls
 
 install: all
-	mkdir -p $(LIBDIR)
-	mkdir -p $(BINDIR)
-	if [ -r $(LIBDIR)/installwatch.so ]; then \
-		rm -f  $(LIBDIR)/installwatch.so; \
+	mkdir -p $(DESTDIR)$(LIBDIR)
+	mkdir -p $(DESTDIR)$(BINDIR)
+	if [ -r $(DESTDIR)$(LIBDIR)/installwatch.so ]; then \
+		rm -f  $(DESTDIR)$(LIBDIR)/installwatch.so; \
 	fi
-	install installwatch.so $(LIBDIR)
+	install -s installwatch.so $(DESTDIR)$(LIBDIR)
 	
-	sed -e "s|#PREFIX#|$(PREFIX)|" < installwatch > $(BINDIR)/installwatch
-	chmod 755 $(BINDIR)/installwatch
+	sed -e "s|#PREFIX#|$(PREFIX)|" < installwatch > $(DESTDIR)$(BINDIR)/installwatch
+	chmod 755 $(DESTDIR)$(BINDIR)/installwatch
 
 uninstall:
-	rm -f $(LIBDIR)/installwatch.so
-	rm -f $(BINDIR)/installwatch
+	rm -f $(DESTDIR)$(LIBDIR)/installwatch.so
+	rm -f $(DESTDIR)$(BINDIR)/installwatch
 	
 clean:
 	rm -f *~ *.bak *.o installwatch.so core localdecls.h libctest test-installwatch
@@ -47,6 +48,6 @@ tarball: clean
 
 test: install
 	gcc -Wall -DVERSION=\"$(VERSION)\" -o test-installwatch test-installwatch.c -ldl
-	$(PREFIX)/bin/installwatch ./test-installwatch
+	$(DESTDIR)$(PREFIX)/bin/installwatch ./test-installwatch
 
 

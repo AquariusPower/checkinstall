@@ -1,6 +1,7 @@
 # $Id: Makefile,v 1.6.2.1 2008/11/09 07:48:18 izto Exp $
 
 # Where to install.
+DESTDIR=
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/sbin
 LCDIR=$(PREFIX)/lib/checkinstall/locale
@@ -25,20 +26,20 @@ install: all
 	export
 	$(MAKE) -C installwatch install
 	
-	mkdir -p $(BINDIR)
-	install checkinstall makepak $(BINDIR)
+	mkdir -p $(DESTDIR)$(BINDIR)
+	install checkinstall makepak $(DESTDIR)$(BINDIR)
 	for file in locale/*.mo ; do \
 		LANG=`echo $$file | sed -e 's|locale/checkinstall-||' \
 			-e 's|\.mo||'` && \
-		mkdir -p $(LCDIR)/$${LANG}/LC_MESSAGES && \
-		cp $$file $(LCDIR)/$${LANG}/LC_MESSAGES/checkinstall.mo || \
+		mkdir -p $(DESTDIR)$(LCDIR)/$${LANG}/LC_MESSAGES && \
+		install $$file $(DESTDIR)$(LCDIR)/$${LANG}/LC_MESSAGES/checkinstall.mo || \
 		exit 1 ; \
 	done
 	
-	mkdir -p $(CONFDIR)
-	install -m644  checkinstallrc-dist $(CONFDIR)
-	if ! [ -f $(CONFDIR)/checkinstallrc ]; then \
-		cp $(CONFDIR)/checkinstallrc-dist $(CONFDIR)/checkinstallrc; \
+	mkdir -p $(DESTDIR)$(CONFDIR)
+	install -m644  checkinstallrc-dist $(DESTDIR)$(CONFDIR)
+	if ! [ -f $(DESTDIR)$(CONFDIR)/checkinstallrc ]; then \
+		install $(DESTDIR)$(CONFDIR)/checkinstallrc-dist $(DESTDIR)$(CONFDIR)/checkinstallrc; \
 	else \
 		echo; \
 		echo; \
@@ -47,7 +48,7 @@ install: all
 		echo An existing checkinstallrc file has been found. ;\
 		echo The one from this distribution can be found at: ; \
 		echo; \
-		echo -e \\t$(CONFDIR)/checkinstallrc-dist ; \
+		echo -e \\t$(DESTDIR)$(CONFDIR)/checkinstallrc-dist ; \
 		echo; \
 		echo; \
 		echo ======================================================== ;\
