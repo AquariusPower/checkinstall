@@ -4,8 +4,8 @@
 DESTDIR=
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/sbin
-LCDIR=$(PREFIX)/lib/checkinstall/locale
-CONFDIR=$(PREFIX)/lib/checkinstall
+LCDIR=$(PREFIX)/share/locale
+CONFDIR=/etc
 
 all:
 	for file in locale/checkinstall-*.po ; do \
@@ -22,7 +22,7 @@ all:
 	done	
 	$(MAKE) -C installwatch
 	
-install: all
+install: all checkinstall checkinstallrc-dist
 	export
 	$(MAKE) -C installwatch install
 	
@@ -54,9 +54,16 @@ install: all
 		echo ======================================================== ;\
 		echo; \
 	fi
-	
+
+checkinstall: checkinstall.in
+	sed -e 's%@TEXTDOMAINDIR@%$(LCDIR)%g' -e 's%@CONFDIR@%$(CONFDIR)%g' $< > $@
+
+checkinstallrc-dist: checkinstallrc-dist.in
+	sed -e 's%@PREFIX@%$(PREFIX)%g' $< >$@
+
 clean:
 	for file in locale/checkinstall-*.mo ; do \
 		rm -f $${file} ; \
 	done
+	rm -f checkinstall checkinstallrc-dist
 	$(MAKE) -C installwatch clean
