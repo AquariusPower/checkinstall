@@ -2526,12 +2526,12 @@ int fchown(int fd, uid_t owner, gid_t group) {
 	return result;
 }
 
+#if !defined(__s390_glibc_bug_) && !defined(__powerpc_glibc_bug_) 
 FILE *fopen(const char *pathname, const char *mode) {
 	FILE *result;
 	instw_t instw;
 	int status=0;
 
-	REFCOUNT;
 
 	if (!libc_handle)
 		initialize();
@@ -2555,6 +2555,7 @@ FILE *fopen(const char *pathname, const char *mode) {
 #endif
 
 	if(mode[0]=='w'||mode[0]=='a'||mode[1]=='+') {
+		REFCOUNT;
 		backup(instw.truepath);
 		instw_apply(&instw);
 		logg("%" PRIdPTR "\tfopen\t%s\t#%s\n",(intptr_t)result,
@@ -2579,6 +2580,7 @@ FILE *fopen(const char *pathname, const char *mode) {
 
 	return result;
 }
+#endif
 
 int ftruncate(int fd, TRUNCATE_T length) {
 	int result;
@@ -3552,12 +3554,11 @@ int ftruncate64(int fd, __off64_t length) {
 	return result;
 }
 
+#if !defined(__s390_glibc_bug_) && !defined(__powerpc_glibc_bug_) 
 FILE *fopen64(const char *pathname, const char *mode) {
 	FILE *result;
 	instw_t instw;
 	int status;
-
-	REFCOUNT;
 
 	if (!libc_handle)
 		initialize();
@@ -3581,6 +3582,7 @@ FILE *fopen64(const char *pathname, const char *mode) {
 #endif
 
 	if(mode[0]=='w'||mode[0]=='a'||mode[1]=='+') {
+		REFCOUNT;
 		backup(instw.truepath);
 		instw_apply(&instw);
 	}
@@ -3603,6 +3605,7 @@ FILE *fopen64(const char *pathname, const char *mode) {
 
 	return result;
 }
+#endif
 
 int open64(const char *pathname, int flags, ...) {
 /* Eventually, there is a third parameter: it's mode_t mode */
