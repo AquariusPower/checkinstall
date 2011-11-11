@@ -22,10 +22,10 @@ ALL_CFLAGS = $(CFLAGS) $(DEFINES)
 all: installwatch.so
 
 installwatch.so: installwatch.o
-	ld -shared -o installwatch.so installwatch.o -ldl -lc
+	$(LD) $(LDFLAGS) -shared -o installwatch.so installwatch.o -ldl -lc
 
 installwatch.o: installwatch.c localdecls.h
-	gcc $(ALL_CFLAGS) -c installwatch.c
+	$(CC) $(ALL_CFLAGS) -c installwatch.c
 
 localdecls.h: create-localdecls
 	./create-localdecls
@@ -52,7 +52,7 @@ tarball: clean
 	tar -czvC .. -f ../installwatch-$(VERSION).tar.gz installwatch-$(VERSION)
 
 test: install
-	gcc $(ALL_CFLAGS) -o test-installwatch test-installwatch.c $(LIBS)
+	$(CC) $(ALL_CFLAGS) $(LDFLAGS) -o test-installwatch test-installwatch.c $(LIBS)
 	$(DESTDIR)$(PREFIX)/bin/installwatch ./test-installwatch
 
 
